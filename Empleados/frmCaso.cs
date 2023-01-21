@@ -30,25 +30,24 @@ namespace Empleados
             txtPuesto.Enabled= estado;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+       private void button1_Click(object sender, EventArgs e)
         {
-           MySqlDataReader dr=mdt.buscarEmpleado(txtBusqueda.Text);
-            bloquearCeldas(false);
-            if (dr.Read()) 
+            var empleado = mdt.buscarEmpleado(txtBusqueda.Text);
+            if (empleado != null)
             {
-                txtLeg.Text = dr[0].ToString();
-                txtNomb.Text = dr[1].ToString();
-                txtApe.Text = dr[2].ToString();
-                txtSector.Text = dr[4].ToString();
-                txtPuesto.Text = dr[5].ToString();
-
-
+                txtLeg.Text = empleado.Legajo;
+                txtNomb.Text = empleado.Nombre;
+                txtApe.Text = empleado.Apellido;
+                txtSector.Text = empleado.Sector;
+                txtPuesto.Text = empleado.Puesto;
+                bloquearCeldas(false);
             }
             else
             {
                 MessageBox.Show("Empleado no encontrado.", "Modulo de empleado", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
+
         int contcaso = 12;
         private void btnImpresion_Click(object sender, EventArgs e)
         {
@@ -72,67 +71,74 @@ namespace Empleados
 
         string motivo;
         int indice = 0;
+        private readonly string[] motivos = {
+            "Ausencia sin justificación", 
+            "Ausencia sin aviso ni justificación", 
+            "Impuntualidad", 
+            "Abandono de tareas", 
+            "Actos de indisciplina", 
+            "Indisciplina con superiores",
+            "Incumplimiento de tareas", 
+            "Negativa a realizar tareas", 
+            "Incumplimiento de normas", 
+            "Provocar riesgos de seguridad", 
+            "Mala fe laboral", 
+            "Falta de colab. y/o fidelidad", 
+            "Robo o hurto de materiales", 
+            "Negligencia en las tareas", 
+            "Emite caso", 
+            "Fallas en la producción"
+        };
+
         private void cbSancion_SelectedIndexChanged(object sender, EventArgs e)
         {
-            indice = cbSancion.SelectedIndex;
-            switch (indice)
+            int indice = cbSancion.SelectedIndex;
+            if(indice >= 0 && indice < motivos.Length)
             {
-                case 0: motivo = "Ausencia sin justificación"; break;
-                case 1: motivo = "Ausencia sin aviso ni justificación"; break;
-                case 2: motivo = "Impuntualidad"; break;
-                case 3: motivo = "Abandono de tareas"; break;
-                case 4: motivo = "Actos de indisciplina"; break;
-                case 5: motivo = "Indisciplina con superiores";break;
-                case 6: motivo = "Incumplimiento de tareas"; break;
-                case 7: motivo = "Negativa a realizar tareas"; break;
-                case 8: motivo = "Incumplimiento de normas"; break;
-                case 9: motivo = "Provocar riesgos de seguridad"; break;
-                case 10: motivo = "Mala fe laboral"; break;
-                case 11: motivo = "Falta de colab. y/o fidelidad"; break;
-                case 12: motivo = "Robo o hurto de materiales"; break;
-                case 13: motivo = "Negligencia en las tareas"; break;
-                case 14: motivo = "Emite caso"; break;
-                case 15: motivo = "Fallas en la producción"; break;
+                txtMotivo.Text = motivos[indice];
             }
-            txtMotivo.Text = motivo.ToString();
+            else
+            {
+                txtMotivo.Text = "";
+            }
         }
+
 
         string resolucion;
             int posicion = 0;
         
+        private readonly string[] resoluciones = {
+            "Llamado de atención", 
+            "Apercibimiento", 
+            "Suspensión", 
+            "Suspensión condicionada", 
+            "Intimación retomar tareas",
+            "Despido con causa", 
+            "Despido sin causa", 
+            "Ext. Mutuo acuerdo", 
+            "Se acepta descargo", 
+            "Se anula Caso", 
+            "Menciones especiales", 
+            "Observaciones varias", 
+            "Emite caso"
+        };
         private void cbResolucion_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //bloquearCeldas(false);
-
-            posicion = cbResolucion.SelectedIndex;
-            switch (posicion)
+            int posicion = cbResolucion.SelectedIndex;
+            if(posicion >= 0 && posicion < resoluciones.Length)
             {
-                case 0: resolucion = "Llamado de atención"; break;
-                case 1: resolucion = "Apercibimiento"; break;
-                case 2: resolucion = "Suspensión";
-                    if (cbResolucion.SelectedIndex ==2)
-                    {
-                        txtSusp.Enabled = true;
-                    }
-                    break;
-                case 3: resolucion = "Suspensión condicionada";
-                    if (cbResolucion.SelectedIndex ==3)
-                    {
-                        txtSusp.Enabled = true;
-                    }
-                    break;
-                case 4: resolucion = "Intimación retomar tareas"; break;
-                case 5: resolucion = "Despido con causa"; break;
-                case 6: resolucion = "Despido sin causa"; break;
-                case 7: resolucion = "Ext. Mutuo acuerdo"; break;
-                case 8: resolucion = "Se acepta descargo"; break;
-                case 9: resolucion = "Se anula Caso"; break;
-                case 10: resolucion = "Menciones especiales"; break;
-                case 11: resolucion = "Observaciones varias"; break;
-                case 12: resolucion = "Emite caso"; break;
+                txtReso.Text = resoluciones[posicion];
+                if (posicion == 2 || posicion == 3)
+                {
+                    txtSusp.Enabled = true;
+                }
             }
-            txtReso.Text = resolucion.ToString();
+            else
+            {
+                txtReso.Text = "";
+            }
         }
+
 
         private void groupBox2_Enter(object sender, EventArgs e)
         {
